@@ -27,3 +27,26 @@ var quotes = [
   }
 ];
 
+var colors = {
+  "G": "#3cff00",
+  "PG": "#f9ff00",
+  "PG-13": "#ff9000",
+  "R": "#ff0000",
+};
+
+d3.select('#quotes')
+    .style('list-style', 'none')
+  .selectAll('li')
+  .data(quotes)
+  .enter()
+  .append('li')
+    .text(d => `${d.quote} - ${d.movie} (${d.year})` )
+  .style('margin', '20px')
+  .style('padding', '20px')
+  .style('background-color', d => colors[d.rating]);
+
+
+
+
+
+
