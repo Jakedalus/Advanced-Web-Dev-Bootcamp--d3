@@ -11,13 +11,6 @@ h1 {
   width: 75%;
 }
 
-#form-container {
-  display: flex;
-  justify-content: center;  
-  align-items: center;
-  width: 90%;
-  margin: 0 auto;
-}
 
 form {
   flex-basis: 60%;
@@ -40,7 +33,7 @@ form {
 }
 
 input {
-  width: 70%;
+  width: 50%;
 }
 
 input,

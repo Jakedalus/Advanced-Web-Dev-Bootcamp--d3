@@ -1,7 +1,7 @@
 var typing = false;
 
-d3.select("#submit-btn")
-    .on('click', function() {
+d3.select("form")
+    .on('submit', function() {
       d3.event.preventDefault();
       const input = d3.select('input');
       const typingNote = d3.select('.typing');
