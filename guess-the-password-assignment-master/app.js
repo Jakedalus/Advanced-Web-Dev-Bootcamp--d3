@@ -3,21 +3,21 @@ document.addEventListener('DOMContentLoaded', function() {
   var guessCount = 4;
   var password = '';
 
-  var start = document.getElementById('start');
-  start.addEventListener('click', function() {
-    toggleClasses(d3.select('#start-screen'), 'hide', 'show');
-    toggleClasses(d3.select('#game-screen'), 'hide', 'show');
-    startGame();
-  });
+  var start = d3.select('#start')
+         .on('click', function() {
+          toggleClasses(d3.select('#start-screen'), 'hide', 'show');
+          toggleClasses(d3.select('#game-screen'), 'hide', 'show');
+          startGame();
+         });
 
   function toggleClasses(element, ...args) {
     console.log(args);
     for (var i = 0; i < args.length; i++) {
-      console.log(`Changing ${args[i]} on ${element.node()} from ${element.classed(args[i])} to ${!element.classed(args[i])}`);
-      console.log(element.classed(args[i]));
+//      console.log(`Changing ${args[i]} on ${element.node()} from ${element.classed(args[i])} to ${!element.classed(args[i])}`);
+//      console.log(element.classed(args[i]));
       element.classed(args[i]) ? element.classed(args[i], false) : element.classed(args[i], true);
-      console.log(element.classed(args[i]));
-      console.log(element.node());
+//      console.log(element.classed(args[i]));
+//      console.log(element.node());  
     }
   }
 
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var randomWords = getRandomValues(words, wordCount); // eslint-disable-line no-undef
     randomWords.forEach(function(word) {
       wordList.append('li')
-            .text(word);
+          .text(word);
     });
 
     // set a secret password and the guess count display
@@ -65,23 +65,24 @@ document.addEventListener('DOMContentLoaded', function() {
     d3.select('#guesses-remaining').text('Guesses remaining: ' + guessCount + '.');
   }
 
-  function updateGame(e) {
-    console.log(d3.event.target.tagName);
-    if (d3.event.target.tagName === 'LI' && !d3.event.target.classList.contains('disabled')) {
+  function updateGame() {
+//    console.log(d3.event.target.tagName);
+    const target = d3.select(d3.event.target);
+    if (target.node().tagName === 'LI' && !target.classed('disabled')) {
       // grab guessed word, check it against password, update view
-      var guess = d3.event.target.innerText;
+      var guess = target.text();
       var similarityScore = compareWords(guess, password);
-      d3.event.target.classList.add('disabled');
-      d3.event.target.innerText = guess + ' --> Matching Letters: ' + similarityScore;
+      target.classed('disabled', true)
+         .text(guess + ' --> Matching Letters: ' + similarityScore);
       setGuessCount(guessCount - 1);
 
       // check whether the game is over
       if (similarityScore === password.length) {
         toggleClasses(d3.select('#winner'), 'hide', 'show');
-        this.on('click', null);
+        d3.select(this).on('click', null);
       } else if (guessCount === 0) {
         toggleClasses(d3.select('#loser'), 'hide', 'show');
-        this.on('click', null);
+        d3.select(this).on('click', null);
       }
     }
   }
