@@ -26,6 +26,10 @@ d3.select('#new-note input')
       } else {
         d3.select(".typing").text(d3.event.target.value);
       }
+      if(d3.select(".typing").text() === '') {
+        typing = false;
+        d3.select(".typing").remove();
+      }
       
     });
     
