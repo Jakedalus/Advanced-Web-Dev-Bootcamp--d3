@@ -58,3 +58,22 @@ button:hover {
 button:focus {
   outline: none;
 }
+
+#remove-btn {
+  background-color: #ff0000;
+}
+
+#remove-btn:hover {
+  background-color: #b20e0e;
+}
+
+#lucky-btn {
+  background-color: #63e168;
+}
+
+#lucky-btn:hover {
+  background-color: #4caf50;
+}
+
+
+
