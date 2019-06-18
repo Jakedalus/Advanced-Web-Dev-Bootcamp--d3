@@ -11,6 +11,18 @@ h1 {
   width: 75%;
 }
 
+#form-container {
+  display: flex;
+  justify-content: center;  
+  align-items: center;
+  width: 90%;
+  margin: 0 auto;
+}
+
+form {
+  flex-basis: 60%;
+}
+
 .note {
   background-color: #fdffb7;
   border: 8px solid #d4daa7;
@@ -28,18 +40,21 @@ form {
 }
 
 input {
-  width: 50%;
+  width: 70%;
 }
 
 input,
 button {
   padding: 10px;
+  margin-right: 5px;
+  
 }
 
 button {
   background-color: #ff9494;
   border: none;
   border-radius: 5px;
+  height: 40px;
 }
 
 button:hover {
