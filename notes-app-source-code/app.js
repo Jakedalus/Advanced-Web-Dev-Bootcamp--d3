@@ -4,10 +4,10 @@ d3.select("form")
     .on('submit', function() {
       d3.event.preventDefault();
       const input = d3.select('input');
-      const typingNote = d3.select('.typing');
-      typingNote
+      const previewNote = d3.select('.preview');
+      previewNote
           .classed('note', true)
-          .classed('typing', false)
+          .classed('preview', false)
           .text(input.property('value'));
       input.property('value', '');
       typing = false;
@@ -20,15 +20,15 @@ d3.select('#new-note input')
         d3.select("#notes")
           .append('p')
             .classed('note', true)
-            .classed('typing', true)
+            .classed('preview', true)
             .text(d3.event.target.value); 
         typing = true;
       } else {
-        d3.select(".typing").text(d3.event.target.value);
+        d3.select(".preview").text(d3.event.target.value);
       }
-      if(d3.select(".typing").text() === '') {
+      if(d3.select(".preview").text() === '') {
         typing = false;
-        d3.select(".typing").remove();
+        d3.select(".preview").remove();
       }
       
     });
