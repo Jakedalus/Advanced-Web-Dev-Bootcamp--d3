@@ -1,0 +1,53 @@
+svg {
+  border: 1px solid black;
+  width: 700px;
+  height: 900px;
+  background-color: lightgray;
+}
+
+#armenia .red {
+  fill: #DA0013;
+}
+
+#armenia .blue {
+  fill: #0033A0;
+}
+
+#armenia .gold {
+  fill: #F2A800;
+}
+
+#palau .blue {
+  fill: #4AADD6;
+}
+
+#palau .gold {
+  fill: #FFDE02;
+}
+
+#jamaica .white {
+  fill: none;
+  stroke: lightgray;
+  stroke-width: 20px;
+}
+
+#jamaica .green {
+  fill: #009B3A;
+}
+
+#jamaica .gold {
+  stroke: #FED200;
+  stroke-width: 40px;
+}
+
+#sudan .red {
+  fill: #D21033;
+}
+
+#sudan .green {
+  fill: #007229;
+}
+
+
+
+

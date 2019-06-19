@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SVG Flags</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <svg 
+      version="1.1" 
+      baseProfile="full"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g id="armenia">
+        <text x="200" y="140" text-anchor="middle" fill="darkblue" stroke="gold" stroke-width=".5px" font-size="2em" >Armenia</text> 
+        <rect x="300" y="50" width="300" height="60" class="red"/>
+        <rect x="300" y="110" width="300" height="60" class="blue"/>
+        <rect x="300" y="170" width="300" height="60" class="gold"/>
+      </g>
+      
+      <g id="palau">
+        <text x="200" y="340" text-anchor="middle" fill="darkblue" stroke="gold" stroke-width=".5px" font-size="2em" >Palau</text> 
+        <rect x="300" y="250" width="300" height="180" class="blue"/>
+        <circle cx="425" cy="340" r="60" class="gold" />
+      </g>
+      
+      <g id="jamaica">
+        <text x="200" y="540" text-anchor="middle" fill="darkblue" stroke="gold" stroke-width=".5px" font-size="2em" >Jamaica</text> 
+        
+        <rect x="300" y="450" width="300" height="180" class="green" />
+        <line x1="300" y1="630" x2="600" y2="450" class="gold"/>
+        <line x1="300" y1="450" x2="600" y2="630" class="gold"/>
+        <polygon points="300 470, 300 610, 425 540" fill="black"/>
+        <polygon points="600 470, 600 610, 475 540" fill="black"/>
+        <rect x="290" y="440" width="320" height="200" class="white" />
+        
+      </g>
+      
+      <g id="sudan">
+        <text x="200" y="740" text-anchor="middle" fill="darkblue" stroke="gold" stroke-width=".5px" font-size="2em" >Sudan</text> 
+<!--        <rect x="300" y="650" width="300" height="180" fill="red" />-->
+        <rect x="300" y="650" width="300" height="60" class="red"/>
+        <rect x="300" y="710" width="300" height="60" fill="white"/>
+        <rect x="300" y="770" width="300" height="60" fill="black"/>
+        <polygon points="300 650, 300 830, 425 740" class="green"/>
+      </g>
+    </svg>
+
+
+  </body>
+</html>
