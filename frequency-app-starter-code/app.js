@@ -1,3 +1,15 @@
+d3.select('#reset')
+  .on('click', function() {
+    d3.selectAll(".letter")
+      .remove();
+  
+    d3.select('#phrase')
+      .text(``);
+  
+    d3.select('#count')
+      .text(``);
+});
+
 d3.select('form')
   .on('submit', function() {
     d3.event.preventDefault();
@@ -8,21 +20,36 @@ d3.select('form')
     const data = analyzeInput(input);
     console.log(data);
     
-    d3.select('#letters')
-      .style('list-style', 'none')
-    .selectAll('span')
-    .data(data)
-    .enter()
-    .append('span')
-      .text(d => `${d.char}` )
-    .classed('letter', true)
-    .style('height', d => ((d.count / input.length) * 400) + 'px')  
+    const letters = d3.select('#letters')
+              .selectAll('.letter')
+              .data(data, d => d.char);
+    letters
+      .classed('new', false)
+      .exit()
+      .remove();
+  
+    letters
+      .enter()
+      .append('div')
+        .text(d => `${d.char}` )
+        .classed('letter', true)
+        .classed('new', true)
+      .merge(letters)
+        .style('height', d => ((d.count / input.length) * 400) + 'px');
+  
+    d3.select('#phrase')
+      .text(`Analysis of ${input}`);
+  
+    d3.select('#count')
+      .text(`New characters: ${letters.enter().nodes().length}`);
+  
+    inputField.property('value', '');
   });
 
 function analyzeInput(str) {
   const freq = {};
 //  str = str.replace(/\s/g, '');
-  const arr = str.split("");
+  const arr = str.split("").sort();
   console.log(arr);
   for (c of arr) {
     if (freq.hasOwnProperty(c)) {
