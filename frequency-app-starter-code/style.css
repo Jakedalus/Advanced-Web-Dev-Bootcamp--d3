@@ -39,6 +39,8 @@ form > button:hover {
   text-align: center;
   background-color: #ffc800;
   vertical-align: bottom;
+  width: 40px;
+  margin: 10px;
 }
 
 .new {
