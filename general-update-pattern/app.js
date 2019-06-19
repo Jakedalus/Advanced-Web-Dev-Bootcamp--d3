@@ -53,17 +53,21 @@ var add = d3.select('#add');
 add.on('click', function() {
   quotes = quotes.concat(newQuotes);
   
-  d3.select('#quotes')
+  var listItems = d3.select('#quotes')
    .selectAll('li')
-   .data(quotes)
+   .data(quotes);
+  
+  listItems
     .enter()
     .append("li")
       .text(d => '"' + d.quote + '" - ' + d.movie + ' (' + d.year + ')')
       .style("margin", "20px")
-      .style("padding", "20px")
+      .style("padding", "50px")
       .style("font-size", d => d.quote.length < 25 ? "2em" : "1em")
       .style("background-color", d => colors[d.rating])
-      .style("border-radius", "8px");
+      .style("border-radius", "8px")
+    .merge(listItems)
+      .style('color', '#5599ff');
   add.remove();
 })
 
