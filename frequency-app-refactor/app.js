@@ -39,17 +39,30 @@ d3.select('form')
       .exit()
       .remove();
   
-    letters
+    var lettersEnter = letters
       .enter()
-      .append('rect')
+      .append('g')
 //        .text(d => `${d.char}` )
         .classed('letter', true)
-        .classed('new', true)
-      .merge(letters)
+        .classed('new', true);
+  
+    lettersEnter.append('rect');
+    lettersEnter.append('text');
+  
+    
+    lettersEnter.merge(letters)
+      .select('rect')
         .attr('width', barWidth)
         .attr('height', d => d.count * 20)
         .attr('y', d => height - (d.count * 20) )
-        .attr('x', (d,i) => (barWidth + barPadding) * i)
+        .attr('x', (d,i) => (barWidth + barPadding) * i);
+  
+    lettersEnter.merge(letters)
+      .select('text')
+        .attr('y', d => height - (d.count * 20) - 10 )
+        .attr('x', (d,i) => (barWidth + barPadding) * i + barWidth / 2)
+        .attr('text-anchor', 'middle')
+        .text(d => d.char);
   
     d3.select('#phrase')
       .text(`Analysis of ${input}`);

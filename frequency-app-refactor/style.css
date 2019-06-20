@@ -34,10 +34,22 @@ form > button:hover {
 /*  width: 800px;*/
 }
 
-.letter {
+.letter rect {
   fill: #ffc800;
 }
 
-.new {
+.new rect {
   fill: #00ff00;
 }
+
+.letter text {
+/*  fill: #ffc800;*/
+}
+
+.new text {
+  font-size: 2em;
+}
+
+
+
+
