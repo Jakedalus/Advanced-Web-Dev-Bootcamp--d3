@@ -1,6 +1,6 @@
-var width = 400;
+var width = 800;
 var height = 200;
-
+var barPadding = 10;
 
 d3.select('#reset')
   .on('click', function() {
@@ -25,7 +25,7 @@ d3.select('form')
     console.log(data);
   
     var numBars = data.length;
-    var barPadding = 10;
+    
     var barWidth = (width / numBars) - barPadding;
     console.log(numBars, barWidth);
     
@@ -45,16 +45,11 @@ d3.select('form')
 //        .text(d => `${d.char}` )
         .classed('letter', true)
         .classed('new', true)
-        .attr('width', barWidth)
-        .attr('height', d => d.count * 100)
-        .attr('y', d => height - (d.count * 100) )
-        .attr('x', (d,i) => (barWidth + barPadding) * i)
-      .append('text')
-        .text(d => `${d.char}` )
-        .attr('y', d => height - (d.count * 100) )
-        .attr('x', (d,i) => (barWidth + barPadding) * i)
       .merge(letters)
-        .style('height', d => ((d.count / input.length) * 400) + 'px');
+        .attr('width', barWidth)
+        .attr('height', d => d.count * 20)
+        .attr('y', d => height - (d.count * 20) )
+        .attr('x', (d,i) => (barWidth + barPadding) * i)
   
     d3.select('#phrase')
       .text(`Analysis of ${input}`);

@@ -35,18 +35,9 @@ form > button:hover {
 }
 
 .letter {
-  display: inline-block;
-  text-align: center;
-  background-color: #ffc800;
   fill: #ffc800;
-  vertical-align: bottom;
-  width: 40px;
-  margin: 10px;
 }
 
 .new {
-  font-size: 1.5em;
-  color: #ffffff;
-  fill: green;
-/*  fill: #ffffff;*/
+  fill: #00ff00;
 }
