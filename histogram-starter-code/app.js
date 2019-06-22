@@ -30,9 +30,14 @@ var bars = d3.select('svg')
       .append('g')
         .classed('bar', true);
 
+console.log(bars);
+
 bars
   .append('rect')
-    .attr('x', (d, i) => xScale(d.x0))
+    .attr('x', (d, i) => {
+      console.log(d, i);
+      return xScale(d.x0)
+    })
     .attr('y', d => yScale(d.length))
     .attr('height', d => height - yScale(d.length))
     .attr('width', d => xScale(d.x1) - xScale(d.x0) - barPadding)
