@@ -1,15 +1,32 @@
 var width = 500;
 var height = 500;
-var padding = 30;
+var padding = 50;
+
+var data = regionData.filter(mustHaveKeys);
+
+function mustHaveKeys(obj) {
+  var keys = [
+    'subscribersPer100',
+    'adultLiteracyRate',
+    'urbanPopulationRate',
+    'medianAge'
+  ];
+  
+  for (var i = 0; i < keys.length; i++) {
+    if (obj[keys] === null) return false;
+  }
+  
+  return true;
+}
 
 //cellular sub rate
 var yScale = d3.scaleLinear()
-        .domain(d3.extent(regionData, d => d.subscribersPer100))
+        .domain(d3.extent(data, d => d.subscribersPer100))
         .range([height - padding, padding]);
 
 //literacy rate
 var xScale = d3.scaleLinear()
-        .domain(d3.extent(regionData, d => d.adultLiteracyRate))
+        .domain(d3.extent(data, d => d.adultLiteracyRate))
         .range([padding, width - padding]);
 
 var xAxis = d3.axisBottom(xScale)
@@ -22,63 +39,68 @@ var yAxis = d3.axisLeft(yScale)
 
 //extremePovertyRate
 var colorScale = d3.scaleLinear()
-          .domain(d3.extent(regionData, d => d.extremePovertyRate))
-          .range(['lightgreen', 'darkred']);
+          .domain(d3.extent(data, d => d.urbanPopulationRate))
+          .range(['lightgreen', 'darkblue']);
 
 //urbanPopulationRate
 var radiusScale = d3.scaleLinear()
-          .domain(d3.extent(regionData, d => d.urbanPopulationRate))
-          .range([2, 40]);
+          .domain(d3.extent(data, d => d.medianAge))
+          .range([5, 30]);
 
-d3.select('svg')
-  .append('g')
-  .attr('transform', `translate(0, ${height - padding})`)
-  .call(xAxis);
+var svg = d3.select('svg')
+      .attr('width', width)
+      .attr('height', height);
 
-d3.select('svg')
-  .append('g')
-  .attr('transform', `translate(${padding}, 0)`)
-  .call(yAxis);
 
-d3.select('svg')
-  .attr('width', width)
-  .attr('height', height)
+
+svg
  .selectAll('circle')
  .data(regionData)
  .enter()
  .append('circle')
   .attr('cx', d => xScale(d.adultLiteracyRate))
   .attr('cy', d => yScale(d.subscribersPer100))
-  .attr('fill', d => colorScale(d.extremePovertyRate))
-  .attr('r', d => radiusScale(d.urbanPopulationRate));
+  .attr('r', d => radiusScale(d.medianAge))
+  .attr('fill', d => colorScale(d.urbanPopulationRate))
+  .attr('stroke', '#fff');
+
+svg
+  .append('g')
+  .attr('transform', `translate(0, ${height - padding})`)
+  .call(xAxis);
+
+svg
+  .append('g')
+  .attr('transform', `translate(${padding}, 0)`)
+  .call(yAxis);
 
 //x-axis label
-d3.select('svg')
+svg
   .append('text')
     .attr('x', width / 2)
     .attr('y', height - padding)
     .attr('dy', '1.5em')
     .style('text-anchor', 'middle')
-    .text('Cell Phone Subscribers Per 100');
+    .text('Cellular Subscribers Per 100');
 
 //title
-d3.select('svg')
+svg
   .append('text')
     .attr('x', width / 2)
     .attr('y', padding)
     .style('text-anchor', 'middle')
     .style('font-size', '1.1em')
-    .text('Data on Cell Phone Subscribes vs. Adult Literacy Rate by Country');
+    .text('Cellular Subscribes vs. Adult Literacy Rate by Country');
 
 //y-axis label
-d3.select('svg')
+svg
   .append('text')
     .attr('transform', 'rotate(-90)')
     .attr('x', -height / 2)
     .attr('y', padding)
     .attr('dy', '-1.1em')
     .style('text-anchor', 'middle')
-    .text('Adult Literacy Rate');
+    .text('Adult Literacy Rate, Aged 15 and Up');
 
 
 
