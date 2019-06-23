@@ -16,6 +16,14 @@ d3.select('svg')
 	.attr('transform', `translate(${width/2}, ${height/2})`)
 	.classed('chart', true);
 
+d3.select('input')
+	.property('min', minYear)
+	.property('max', maxYear)
+	.property('value', minYear)
+	.on('input', function() {
+		makeMonthGraph(+d3.event.target.value);
+	});
+
 makeMonthGraph(minYear);
 
 function makeMonthGraph(year) {
