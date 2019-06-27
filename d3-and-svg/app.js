@@ -1,4 +1,4 @@
-//var minYear = birthData[0].year;
+
 //var maxYear = birthData[birthData.length - 1].year;
 var minYear = d3.min(birthData, d => d.year);
 var maxYear = d3.max(birthData, d => d.year);

@@ -31,7 +31,7 @@ var radiusScale = d3.scaleLinear()
 
 var tooltip = d3.select('body')
 				.append('div')
-					.classed('tooltip', true);
+				.classed('tooltip', true);
 
 
 
