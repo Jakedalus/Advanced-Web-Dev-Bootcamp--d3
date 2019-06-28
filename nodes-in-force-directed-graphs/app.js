@@ -54,6 +54,7 @@ simulation
                     .id(d => d.color)
                     .distance(d => 5 * (d.source.size + d.target.size)))
   .on('tick', () => {
+    console.log(simulation.alpha());
     nodeSelection
       .attr('cx', d => d.x)
       .attr('cy', d => d.y);
@@ -65,16 +66,23 @@ simulation
       .attr('y2', d => d.target.y);
   });
 
-function dragStart() {
+function dragStart(d) {
   console.log('starting to drag');
+  d.fx = d.x;
+  d.fy = d.y;
 }
 
-function drag() {
+function drag(d) {
   console.log('dragging!');
+  simulation.alpha(0.5).restart();
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
 }
 
-function dragEnd() {
+function dragEnd(d) {
   console.log('done dragging!');
+  d.fx = null;
+  d.fy = null;
 }
 
 
