@@ -6,15 +6,19 @@ d3.queue()
 
 		var geoData = topojson.feature(mapData, mapData.objects.countries).features;
 
-		console.log(mapData);
-		console.log(co2Data);
+		console.log('mapData:', mapData);
+		console.log('co2Data:', co2Data);
 
-		co2Data.forEach(row => {
+		var filteredData = co2Data.filter(d => +d.Year === 2011);
+
+		console.log('filteredData:', filteredData);
+
+		filteredData.forEach(row => {
 			var countries = geoData.filter(d => d.id === row['Country Code']);
 			countries.forEach(country => country.properties = row);
 		});
 
-		console.log(geoData);
+		console.log('geoData:', geoData);
 
 		var map = d3.select('#map');
 
@@ -40,8 +44,44 @@ d3.queue()
 				.classed('country', true)
 				.attr('d', path);
 
-		// var chartWidth = 500;
-		// var chartHeight = 500;
+		setMapColor(2011);
+
+		function setMapColor() {
+
+			
+
+			// console.log('Data filtered by year:', filteredData);
+			console.log('Max Emissions:', d3.max(geoData, d => +d.properties.Emissions));
+			console.log('Max Emissions Per Capita:', d3.max(geoData, d => +d.properties['Emissions Per Capita']));
+			console.log('Max Emissions Per Capita:', geoData.filter(d => +d.properties['Emissions Per Capita'] === d3.max(geoData, d => +d.properties['Emissions Per Capita'])));
+
+			console.log('Min Emissions Per Capita:', d3.min(geoData, d => +d.properties['Emissions Per Capita']));
+
+
+			var emissionsScale = d3.scaleLinear()
+							.domain([0, d3.max(geoData, d => +d.properties.Emissions)])
+							.range(['white', '#bb0a1e']);
+
+			var emissionsPerCapitaScale = d3.scaleLinear()
+							.domain([0, d3.max(geoData, d => +d.properties['Emissions Per Capita']) ])
+							.range(['orange','darkred']);
+
+			d3.selectAll('.country')
+					.transition()
+					.duration(750)
+					.ease(d3.easeBackIn)
+					.attr('fill', d => {
+						// console.log(d);
+						// var data = d.properties.Emissions;
+						var data = +d.properties['Emissions Per Capita'];
+
+						console.log(d.properties.Country, data, emissionsPerCapitaScale(data));
+
+						return data ? emissionsPerCapitaScale(data) : '#ccc';
+						// return data ? emissionsScale(data) : '#ccc';	
+					});
+		}
+
 
 		var pie = d3.select('#pie');
 					// .attr('width', chartWidth)

@@ -26,6 +26,11 @@ body {
 	flex-grow: 2;
 }
 
+.country {
+	stroke: white;
+	stroke-width: .4px;
+}
+
 #pie {
 	background-color: green;
 }
