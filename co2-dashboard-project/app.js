@@ -16,13 +16,29 @@ d3.queue()
 
 		console.log(geoData);
 
-
-		// var mapWidth = 700;
-		// var mapHeight = 700;
-
 		var map = d3.select('#map');
-					// .attr('width', mapWidth)
-					// .attr('height', mapHeight);
+
+		// console.log(map, map.style("width"));
+
+		var mapWidth = +map.style("width").slice(0, map.style("width").length-2);
+		var mapHeight = +map.style("height").slice(0, map.style("height").length-2);
+
+		console.log(mapWidth, mapHeight);
+
+		var projection = d3.geoEquirectangular()
+								.scale(80)
+								.translate([ mapWidth / 2, mapHeight / 2]);
+		var path = d3.geoPath()	
+						.projection(projection);
+
+
+		map
+			.selectAll('.country')
+			.data(geoData)
+			.enter()
+			.append('path')
+				.classed('country', true)
+				.attr('d', path);
 
 		// var chartWidth = 500;
 		// var chartHeight = 500;
