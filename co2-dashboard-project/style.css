@@ -1,0 +1,35 @@
+body {
+	display: flex;
+	flex-direction: column;
+}
+
+#control-panel {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+#panels {
+	display: flex;
+
+}
+
+#charts {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+}
+
+#map {
+	background-color: blue;
+	flex-grow: 2;
+}
+
+#pie {
+	background-color: green;
+}
+
+#bar {
+	background-color: red;
+}

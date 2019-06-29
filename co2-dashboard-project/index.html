@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>CO2 Dashboard</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<section id="control-panel">
+		<h1>CO2 Dashboard</h1>
+		<div>
+			<label for="year" id="co2-year-label">Explore CO2 by year.</label>
+			<input type="range" name="year">
+		</div>
+		
+		<div>
+			<label>Choose between total emissions or emissions per capita</label>
+			<input type="radio" name="emissions" id="emissions-per-capita">
+			<label for="emissions-per-capita">Emissions</label>
+			<input type="radio" name="emissions" id="emissions-total">
+			<label for="emissions-total">Emissions per Capita</label>
+		</div>
+		<p>Click a country to see its trends by year.</p>
+	</section>
+	<section id="panels">
+		<svg 
+			id="map"
+	    version="1.1"
+	    baseProfile="full"
+	    xmlns="http://www.w3.org/2000/svg" >
+		 </svg>
+
+		 <div id="charts">
+		 		<svg 
+		 		 	id="pie"
+		 	    version="1.1"
+		 	    baseProfile="full"
+		 	    xmlns="http://www.w3.org/2000/svg" >
+		 		 </svg>
+		 
+		 		 <svg 
+		 		 	id="bar"
+		 	    version="1.1"
+		 	    baseProfile="full"
+		 	    xmlns="http://www.w3.org/2000/svg" >
+		 		 </svg>
+		 	</div>
+	</section>
+
+	<script src="https://d3js.org/d3.v4.js"></script>
+  <script src="regionData.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
