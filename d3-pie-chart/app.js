@@ -47,6 +47,8 @@ function makeGraph(year) {
 				})
 				(yearData);
 
+	console.log('arcs:', arcs);
+
 	var path = d3.arc()
 				.outerRadius((width / 2) - 10)
 				.innerRadius(width / 4);
@@ -54,6 +56,8 @@ function makeGraph(year) {
 	var update = d3.select('.chart')
 					.selectAll('.arc')
 					.data(arcs);
+
+	console.log('update:', update);
 				
 	update	
 		.exit()

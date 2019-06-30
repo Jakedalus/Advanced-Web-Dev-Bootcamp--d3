@@ -64,6 +64,8 @@ d3.queue()
 			});
 
 
+
+
 		// EMISSIONS/EMISSIONS PER CAPITA RADIO BUTTONS
 
 		d3.select('radiogroup')
@@ -89,6 +91,7 @@ d3.queue()
 		var mapHeight = +map.style("height").slice(0, map.style("height").length-2);
 
 		console.log(mapWidth, mapHeight);
+		
 
 		var projection = d3.geoEquirectangular()
 								.scale(80)
@@ -105,11 +108,12 @@ d3.queue()
 				.classed('country', true)
 				.attr('d', path);
 
-
-		setMapColor(2011, 'emissions-total');
-
 		d3.select('#current-year')
 					.text(2011);
+
+		setMapColor(2011, 'emissions-total');
+		drawPieChart(2011, 'emissions-total');
+		
 
 
 		// function setFilteredData(year) {
@@ -130,6 +134,8 @@ d3.queue()
 		// }
 
 		function setMapColor(year, emisssionsType) {
+
+			
 
 			console.log('Year:', year);
 			console.log('emisssionsType:', emisssionsType);
@@ -167,8 +173,8 @@ d3.queue()
 						if(Object.entries(d.properties).length !== 0 && d.properties.constructor === Object) {
 							data = d.properties.data.filter(d => +d.year === year)[0];
 
-							console.log('data:', data);
-							console.log('emisssionsType:', emisssionsType);
+							// console.log('data:', data);
+							// console.log('emisssionsType:', emisssionsType);
 
 							// if (data) console.log(d.properties.country, data.emisssionsPerCapita, emissionsPerCapitaScale(data.emisssionsPerCapita));
 							if (data) {
@@ -188,6 +194,73 @@ d3.queue()
 						// return data ? emissionsPerCapitaScale(data) : '#ccc';
 						// return data ? emissionsScale(data) : '#ccc';	
 					});
+		}
+
+		function drawPieChart(year, emisssionsType) {
+			var filteredCO2Data = co2Data.filter(d => +d.Year === year);
+
+			
+
+
+
+			var arcs = d3.pie()
+				.value(d => { 
+					// console.log('d:', d);
+					return d.Emissions})
+				.sort(function(a, b) {
+					// console.log('a:', a);
+					// console.log('b:', b);
+					if (a.Region < b.Region) return -1;
+					else if(a.Region > b.Region) return 1;
+					else return a.Emisssions - b.Emisssions;
+				})
+				(filteredCO2Data);
+
+
+			console.log('arcs', arcs);
+
+			console.log('arcs with no angle:', arcs.filter(a => a.startAngle === null));
+			console.log('arcs.startAngle:', arcs.map(a => a.startAngle));
+
+							
+
+			console.log('pie.style:', d3.select('#pie').style('width'));
+
+			var chartWidth = +d3.select('#pie').style("width").slice(0, d3.select('#pie').style("width").length-2);
+			var chartHeight = +d3.select('#pie').style("height").slice(0, d3.select('#pie').style("height").length-2);
+
+			console.log(chartWidth);
+
+			
+
+			var path = d3.arc()
+						.outerRadius((chartWidth / 4) - 10)
+						.innerRadius(0);
+
+			var pie = d3.select('#pie')
+				.append('g')
+				.attr('transform', `translate(${chartWidth / 2}, ${chartHeight / 2}) `)
+				// .classed('chart', true);
+				.selectAll('.arc')
+				.data(arcs);
+
+			console.log('path:', path);
+			console.log('pie2:', pie);
+						
+			pie	
+				.exit()
+				.remove();
+			
+			pie
+				.enter()
+				.append('path')
+					.classed('arc', true)
+				.merge(pie)		
+					// .attr('fill', d => colorScale(d.data.continent))
+					.attr('fill', d => 'yellow')
+					.attr('stroke', 'black')
+					.attr('d', path);
+
 		}
 
 
