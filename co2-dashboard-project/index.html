@@ -12,13 +12,13 @@
 			<input type="range" name="year" step="1" id="year-input">
 		</div>
 		
-		<div>
+		<radiogroup>
 			<label>Choose between total emissions or emissions per capita</label>
-			<input type="radio" name="emissions" id="emissions-per-capita">
-			<label for="emissions-per-capita">Emissions</label>
-			<input type="radio" name="emissions" id="emissions-total">
-			<label for="emissions-total">Emissions per Capita</label>
-		</div>
+			<input type="radio" name="emissions" value="emissions-total" id="emissions-total" checked>
+			<label for="emissions-total">Emissions</label>
+			<input type="radio" name="emissions" value="emissions-per-capita" id="emissions-per-capita">
+			<label for="emissions-per-capita">Emissions per Capita</label>
+		</radiogroup>
 		<p>Click a country to see its trends by year.</p>
 	</section>
 	<section id="panels">

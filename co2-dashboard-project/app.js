@@ -55,9 +55,28 @@ d3.queue()
 				d3.select('#current-year')
 					.text(+d3.event.target.value);
 
-				setMapColor(+d3.event.target.value);
+				var emisssionsType = d3.select(':checked').property('value');
+
+				console.log(emisssionsType);
+
+
+				setMapColor(+d3.event.target.value, emisssionsType);
 			});
 
+
+		// EMISSIONS/EMISSIONS PER CAPITA RADIO BUTTONS
+
+		d3.select('radiogroup')
+			.on('change', function() {
+				console.log(d3.event.target.value);
+
+				var year = +d3.select('#year-input').property('value');
+
+				console.log(year);
+
+				setMapColor(year, d3.event.target.value);
+
+			});
 
 
 		// MAP
@@ -87,7 +106,7 @@ d3.queue()
 				.attr('d', path);
 
 
-		setMapColor(2011);
+		setMapColor(2011, 'emissions-total');
 
 		d3.select('#current-year')
 					.text(2011);
@@ -110,9 +129,10 @@ d3.queue()
 
 		// }
 
-		function setMapColor(year) {
+		function setMapColor(year, emisssionsType) {
 
 			console.log('Year:', year);
+			console.log('emisssionsType:', emisssionsType);
 
 			var filteredCO2Data = co2Data.filter(d => +d.Year === year);
 
@@ -132,7 +152,7 @@ d3.queue()
 
 			var emissionsPerCapitaScale = d3.scaleLinear()
 							.domain([0, d3.max(filteredCO2Data, d => +d['Emissions Per Capita']) ])
-							.range(['orange','darkred']);
+							.range(['white','darkred']);
 
 			console.log(d3.selectAll('.country'));
 
@@ -141,17 +161,24 @@ d3.queue()
 					.duration(750)
 					.ease(d3.easeBackIn)
 					.attr('fill', d => {
-						console.log('setting country color:', d.properties.country);
-						console.log(d);
+						// console.log('setting country color:', d.properties.country);
+						// console.log(d);
 						var data = null;
 						if(Object.entries(d.properties).length !== 0 && d.properties.constructor === Object) {
 							data = d.properties.data.filter(d => +d.year === year)[0];
 
 							console.log('data:', data);
+							console.log('emisssionsType:', emisssionsType);
 
-							if (data) console.log(d.properties.country, data.emisssionsPerCapita, emissionsPerCapitaScale(data.emisssionsPerCapita));
-
-							return data ? emissionsPerCapitaScale(data.emisssionsPerCapita) : '#ccc';
+							// if (data) console.log(d.properties.country, data.emisssionsPerCapita, emissionsPerCapitaScale(data.emisssionsPerCapita));
+							if (data) {
+								if (emisssionsType === 'emissions-total') {
+									return emissionsScale(data.emisssions);
+								} else if (emisssionsType === 'emissions-per-capita') {
+									return emissionsPerCapitaScale(data.emisssionsPerCapita);
+								}
+							} 
+							
 						}
 
 						return '#ccc';
