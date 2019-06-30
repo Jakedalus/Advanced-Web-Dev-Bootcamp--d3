@@ -22,19 +22,26 @@ body {
 }
 
 #map {
-	background-color: blue;
+	/*background-color: blue;*/
 	flex-grow: 2;
+	height: 600px;
 }
 
 .country {
-	stroke: white;
+	stroke: black;
 	stroke-width: .4px;
 }
 
+#pie, #bar {
+	height: 300px;
+	flex-basis: 300px;
+}
+
 #pie {
-	background-color: green;
+	/*background-color: green;*/
 }
 
 #bar {
 	background-color: red;
 }
+

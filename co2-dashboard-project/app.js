@@ -61,6 +61,7 @@ d3.queue()
 
 
 				setMapColor(+d3.event.target.value, emisssionsType);
+				drawPieChart(+d3.event.target.value, emisssionsType);
 			});
 
 
@@ -77,6 +78,7 @@ d3.queue()
 				console.log(year);
 
 				setMapColor(year, d3.event.target.value);
+				drawPieChart(year, d3.event.target.value);
 
 			});
 
@@ -199,14 +201,9 @@ d3.queue()
 		function drawPieChart(year, emisssionsType) {
 			var filteredCO2Data = co2Data.filter(d => +d.Year === year);
 
-			
-
-
 
 			var arcs = d3.pie()
-				.value(d => { 
-					// console.log('d:', d);
-					return d.Emissions})
+				.value(d => emisssionsType === 'emissions-total' ? d.Emissions : d['Emissions Per Capita'])
 				.sort(function(a, b) {
 					// console.log('a:', a);
 					// console.log('b:', b);
@@ -229,7 +226,7 @@ d3.queue()
 			var chartWidth = +d3.select('#pie').style("width").slice(0, d3.select('#pie').style("width").length-2);
 			var chartHeight = +d3.select('#pie').style("height").slice(0, d3.select('#pie').style("height").length-2);
 
-			console.log(chartWidth);
+			console.log(chartWidth, chartHeight);
 
 			
 
@@ -238,9 +235,10 @@ d3.queue()
 						.innerRadius(0);
 
 			var pie = d3.select('#pie')
+				.attr('width', chartWidth)
+  				.attr('height', chartHeight)
 				.append('g')
-				.attr('transform', `translate(${chartWidth / 2}, ${chartHeight / 2}) `)
-				// .classed('chart', true);
+					.attr('transform', `translate(${chartWidth / 2}, ${chartHeight / 2}) `)
 				.selectAll('.arc')
 				.data(arcs);
 
