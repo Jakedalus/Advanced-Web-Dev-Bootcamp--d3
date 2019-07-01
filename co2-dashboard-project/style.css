@@ -19,6 +19,7 @@ body {
 	display: flex;
 	flex-direction: column;
 	flex-grow: 1;
+	flex-basis: 250px;
 }
 
 #map {
@@ -30,11 +31,17 @@ body {
 .country {
 	stroke: black;
 	stroke-width: .4px;
+	cursor: pointer;
+}
+
+.country:hover {
+	/*stroke-width: 1px;*/
+	fill: darkgreen;
 }
 
 #pie, #bar {
 	height: 300px;
-	flex-basis: 300px;
+	
 }
 
 #pie {

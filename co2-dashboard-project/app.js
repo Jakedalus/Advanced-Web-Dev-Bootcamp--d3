@@ -21,14 +21,14 @@ d3.queue()
 				if (country.properties.data) {
 					country.properties.data.push({
 						year: row.Year,
-						emisssions: row.Emissions,
-						emisssionsPerCapita: row['Emissions Per Capita']
+						emissions: row.Emissions,
+						emissionsPerCapita: row['Emissions Per Capita']
 					}); 
 				} else {
 					country.properties.data = [{
 						year: row.Year,
-						emisssions: row.Emissions,
-						emisssionsPerCapita: row['Emissions Per Capita']
+						emissions: row.Emissions,
+						emissionsPerCapita: row['Emissions Per Capita']
 					}];
 					country.properties.country = row.Country;
 					country.properties.continent = row.Continent;
@@ -55,13 +55,13 @@ d3.queue()
 				d3.select('#current-year')
 					.text(+d3.event.target.value);
 
-				var emisssionsType = d3.select(':checked').property('value');
+				var emissionsType = d3.select(':checked').property('value');
 
-				console.log(emisssionsType);
+				console.log(emissionsType);
 
 
-				setMapColor(+d3.event.target.value, emisssionsType);
-				drawPieChart(+d3.event.target.value, emisssionsType);
+				setMapColor(+d3.event.target.value, emissionsType);
+				drawPieChart(+d3.event.target.value, emissionsType);
 			});
 
 
@@ -115,6 +115,12 @@ d3.queue()
 
 		setMapColor(2011, 'emissions-total');
 		drawPieChart(2011, 'emissions-total');
+
+		d3.selectAll('.country')
+			.on('click', function(d) {
+				console.log('Data:', d);	
+				drawBarGraph(d);
+			});
 		
 
 
@@ -135,12 +141,10 @@ d3.queue()
 
 		// }
 
-		function setMapColor(year, emisssionsType) {
-
-			
+		function setMapColor(year, emissionsType) {
 
 			console.log('Year:', year);
-			console.log('emisssionsType:', emisssionsType);
+			console.log('emissionsType:', emissionsType);
 
 			var filteredCO2Data = co2Data.filter(d => +d.Year === year);
 
@@ -176,14 +180,14 @@ d3.queue()
 							data = d.properties.data.filter(d => +d.year === year)[0];
 
 							// console.log('data:', data);
-							// console.log('emisssionsType:', emisssionsType);
+							// console.log('emissionsType:', emissionsType);
 
-							// if (data) console.log(d.properties.country, data.emisssionsPerCapita, emissionsPerCapitaScale(data.emisssionsPerCapita));
+							// if (data) console.log(d.properties.country, data.emissionsPerCapita, emissionsPerCapitaScale(data.emissionsPerCapita));
 							if (data) {
-								if (emisssionsType === 'emissions-total') {
-									return emissionsScale(data.emisssions);
-								} else if (emisssionsType === 'emissions-per-capita') {
-									return emissionsPerCapitaScale(data.emisssionsPerCapita);
+								if (emissionsType === 'emissions-total') {
+									return emissionsScale(data.emissions);
+								} else if (emissionsType === 'emissions-per-capita') {
+									return emissionsPerCapitaScale(data.emissionsPerCapita);
 								}
 							} 
 							
@@ -198,18 +202,18 @@ d3.queue()
 					});
 		}
 
-		function drawPieChart(year, emisssionsType) {
+		function drawPieChart(year, emissionsType) {
 			var filteredCO2Data = co2Data.filter(d => +d.Year === year);
 
 
 			var arcs = d3.pie()
-				.value(d => emisssionsType === 'emissions-total' ? d.Emissions : d['Emissions Per Capita'])
+				.value(d => emissionsType === 'emissions-total' ? d.Emissions : d['Emissions Per Capita'])
 				.sort(function(a, b) {
 					// console.log('a:', a);
 					// console.log('b:', b);
-					if (a.Region < b.Region) return -1;
-					else if(a.Region > b.Region) return 1;
-					else return a.Emisssions - b.Emisssions;
+					if (a.Continent < b.Continent) return -1;
+					else if(a.Continent > b.Continent) return 1;
+					else return a.Emissions - b.Emissions;
 				})
 				(filteredCO2Data);
 
@@ -236,7 +240,7 @@ d3.queue()
 
 			var pie = d3.select('#pie')
 				.attr('width', chartWidth)
-  				.attr('height', chartHeight)
+  			.attr('height', chartHeight)
 				.append('g')
 					.attr('transform', `translate(${chartWidth / 2}, ${chartHeight / 2}) `)
 				.selectAll('.arc')
@@ -262,13 +266,63 @@ d3.queue()
 		}
 
 
-		var pie = d3.select('#pie');
-					// .attr('width', chartWidth)
-					// .attr('height', chartHeight);
+		function drawBarGraph(country) {
+
+			var data = country.properties.data.sort((a,b) => a.year - b.year);
+
+			console.log('data:', data);
+
+			var width = +d3.select('#bar').style("width").slice(0, d3.select('#bar').style("width").length-2);
+			var height = +d3.select('#bar').style("height").slice(0, d3.select('#bar').style("height").length-2);
+
+			var minYear = +d3.min(data, d => d.year);
+			var maxYear = +d3.max(data, d => d.year);
+			var numBars = data.length;
+			var barPadding = 10;
+			var barWidth = width / numBars - barPadding;
+
+			var maxEmissions = +d3.max(data, d => d.emissions);
+			var maxEmissionsPerCaptia = +d3.max(data, d => d.emissionsPerCapita);
+
+			var yScale = d3.scaleLinear()
+			        .domain([0, maxEmissions])
+			        .range([height, 0]);
+
+			console.log(`
+				maxEmissions: ${maxEmissions}
+				yScale: ${yScale}
+			`);
+
+			var bar = d3.select('#bar')
+			    .attr('width', width)
+			    .attr('height', height)
+			  .selectAll('rect')
+			  .data(data)
+			  .enter()
+			  .append('rect')
+			    .attr('width', barWidth)
+			    .attr('height', d => height - yScale(d.emissions))
+			    .attr('y', d => yScale(d.emissions))
+			    .attr('x', (d,i) => (barWidth + barPadding) * i)
+			    .attr('fill', 'purple');
+
+			console.log('bar:', bar);
+
+		}
 
 
-		var bar = d3.select('#bar');
-					// .attr('width', chartWidth)
-					// .attr('height', chartHeight);
 	});
+
+
+
+
+
+
+
+
+
+
+
+
+
 
