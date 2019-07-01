@@ -51,5 +51,6 @@ body {
 #bar {
 	background-color: red;
 	padding: 20px;
+	overflow: visible;
 }
 

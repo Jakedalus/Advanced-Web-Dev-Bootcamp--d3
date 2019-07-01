@@ -124,24 +124,7 @@ d3.queue()
 
 
 		// BAR GRAPH
-
-		var chartWidth = +d3.select('#bar').style("width").slice(0, d3.select('#bar').style("width").length-2);
-		var chartHeight = +d3.select('#bar').style("height").slice(0, d3.select('#bar').style("height").length-2);
-
-		var bar = d3.select('#bar');
-		
-		// bar.append('text')
-  //       .text('CO2 Emissions' )
-  //       .attr('x', chartWidth / 2)
-  //       .attr('y', 20)
-  //       .attr('text-anchor', 'middle');
-
-    bar.append('text')
-        .text('CO2 Emissions, metric tons')
-        .attr('transform', 'rotate(-90)')
-        .attr('x', - chartWidth / 2)
-        .attr('y', '1em')
-        .attr('text-anchor', 'middle');
+		// drawBarGraph();
 
 
     // HELPER FUNCTIONS
@@ -273,50 +256,73 @@ d3.queue()
 
 		function drawBarGraph(country) {
 
+
 			var data = country.properties.data.sort((a,b) => a.year - b.year);
 
 			console.log('data:', data);
 
-			
 
-			var width = chartWidth;
-			var height = chartHeight;
+			var chartWidth = +d3.select('#bar').style("width").slice(0, d3.select('#bar').style("width").length-2);
+			// var chartWidth = 500;
+			var chartHeight = +d3.select('#bar').style("height").slice(0, d3.select('#bar').style("height").length-2);
 			var padding = 20;
+
+			console.log('co2Data:', co2Data);
 
 			var minYear = +d3.min(data, d => d.year);
 			var maxYear = +d3.max(data, d => d.year);
+			var maxEmissions = +d3.max(co2Data, d => +d['Emissions']);
+			var maxEmissionsPerCaptia = +d3.max(co2Data, d => d['Emissions Per Capita']);
+
 			var numBars = data.length;
 			var barPadding = 2;
-			var barWidth = width / numBars - barPadding;
-
-			var maxEmissions = +d3.max(data, d => d.emissions);
-			var maxEmissionsPerCaptia = +d3.max(data, d => d.emissionsPerCapita);
+			var barWidth = ((chartWidth - padding) / numBars) - barPadding;
 
 			var yScale = d3.scaleLinear()
 			        .domain([0, maxEmissions])
-			        .range([height - padding, padding]);
+			        .range([chartHeight - padding, padding]);
 
 			var xScale = d3.scaleLinear()
                      .domain(d3.extent(data, d => d.year))
-                     .range([padding, width - padding]);
+                     .range([padding, chartWidth - padding]);
 
 
 
 			console.log(`
+				minYear: ${minYear}
+				maxYear: ${maxYear}
 				maxEmissions: ${maxEmissions}
+				maxEmissionsPerCaptia: ${maxEmissionsPerCaptia}
 				yScale: ${yScale}
 				xScale: ${xScale}
 			`);
 
+			var bar = d3.select('#bar');
+
+
+	    bar.append('g')
+        .attr('transform', 'translate(0, ' + (chartHeight - padding) + ')')
+        .classed('x-axis', true);
+
+	    bar.append('g')
+	        .attr('transform', 'translate(' + (padding - 0) + ',0)')
+	        .classed('y-axis', true);
+
+	    d3.select('.x-axis')
+	          .call(d3.axisBottom(xScale));
+
+	    d3.select('.y-axis')
+	        .call(d3.axisLeft(yScale));
+
 			bar
-			    .attr('width', width)
-			    .attr('height', height)
+			    .attr('width', chartWidth)
+			    .attr('height', chartHeight)
 			  .selectAll('rect')
 			  .data(data)
 			  .enter()
 			  .append('rect')
 			    .attr('width', barWidth)
-			    .attr('height', d => height - yScale(d.emissions))
+			    .attr('height', d => chartHeight - yScale(d.emissions) - 20)
 			    .attr('y', d => yScale(d.emissions))
 			    .attr('x', (d,i) => xScale(d.year))
 			    .attr('fill', 'purple');
@@ -326,6 +332,13 @@ d3.queue()
         .attr('x', chartWidth / 2)
         .attr('y', 20)
         .attr('text-anchor', 'middle');
+
+      bar.append('text')
+	        .text('CO2 Emissions, metric tons')
+	        .attr('transform', 'rotate(-90)')
+	        .attr('x', - chartWidth / 2)
+	        .attr('y', '0.2em')
+	        .attr('text-anchor', 'middle');
 
 			
 
