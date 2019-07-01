@@ -121,25 +121,30 @@ d3.queue()
 				console.log('Data:', d);	
 				drawBarGraph(d);
 			});
+
+
+		// BAR GRAPH
+
+		var chartWidth = +d3.select('#bar').style("width").slice(0, d3.select('#bar').style("width").length-2);
+		var chartHeight = +d3.select('#bar').style("height").slice(0, d3.select('#bar').style("height").length-2);
+
+		var bar = d3.select('#bar');
 		
+		// bar.append('text')
+  //       .text('CO2 Emissions' )
+  //       .attr('x', chartWidth / 2)
+  //       .attr('y', 20)
+  //       .attr('text-anchor', 'middle');
+
+    bar.append('text')
+        .text('CO2 Emissions, metric tons')
+        .attr('transform', 'rotate(-90)')
+        .attr('x', - chartWidth / 2)
+        .attr('y', '1em')
+        .attr('text-anchor', 'middle');
 
 
-		// function setFilteredData(year) {
-		// 	var geoData = topojson.feature(mapData, mapData.objects.countries).features;
-		// 	var filteredCO2Data = co2Data.filter(d => +d.Year === year);
-
-		// 	console.log('filteredCO2Data:', filteredCO2Data);
-
-		// 	filteredCO2Data.forEach(row => {
-		// 		var countries = geoData.filter(d => d.id === row['Country Code']);
-		// 		countries.forEach(country => country.properties = row);
-		// 	});
-
-		// 	console.log('geoData:', geoData);
-
-		// 	return geoData;
-
-		// }
+    // HELPER FUNCTIONS
 
 		function setMapColor(year, emissionsType) {
 
@@ -272,13 +277,16 @@ d3.queue()
 
 			console.log('data:', data);
 
-			var width = +d3.select('#bar').style("width").slice(0, d3.select('#bar').style("width").length-2);
-			var height = +d3.select('#bar').style("height").slice(0, d3.select('#bar').style("height").length-2);
+			
+
+			var width = chartWidth;
+			var height = chartHeight;
+			var padding = 20;
 
 			var minYear = +d3.min(data, d => d.year);
 			var maxYear = +d3.max(data, d => d.year);
 			var numBars = data.length;
-			var barPadding = 10;
+			var barPadding = 2;
 			var barWidth = width / numBars - barPadding;
 
 			var maxEmissions = +d3.max(data, d => d.emissions);
@@ -286,14 +294,21 @@ d3.queue()
 
 			var yScale = d3.scaleLinear()
 			        .domain([0, maxEmissions])
-			        .range([height, 0]);
+			        .range([height - padding, padding]);
+
+			var xScale = d3.scaleLinear()
+                     .domain(d3.extent(data, d => d.year))
+                     .range([padding, width - padding]);
+
+
 
 			console.log(`
 				maxEmissions: ${maxEmissions}
 				yScale: ${yScale}
+				xScale: ${xScale}
 			`);
 
-			var bar = d3.select('#bar')
+			bar
 			    .attr('width', width)
 			    .attr('height', height)
 			  .selectAll('rect')
@@ -303,10 +318,25 @@ d3.queue()
 			    .attr('width', barWidth)
 			    .attr('height', d => height - yScale(d.emissions))
 			    .attr('y', d => yScale(d.emissions))
-			    .attr('x', (d,i) => (barWidth + barPadding) * i)
+			    .attr('x', (d,i) => xScale(d.year))
 			    .attr('fill', 'purple');
 
-			console.log('bar:', bar);
+			bar.append('text')
+        .text(`CO2 Emissions, ${country.properties.country}` )
+        .attr('x', chartWidth / 2)
+        .attr('y', 20)
+        .attr('text-anchor', 'middle');
+
+			
+
+	    // bar.append('text')
+	    //     .attr('x', width / 2)
+	    //     .attr('y', '2em')
+	    //     .attr('text-anchor', 'middle')
+	    //     .style('font-size', '1.5em')
+	    //     .classed('title', true);
+
+	    console.log('bar:', bar);
 
 		}
 
