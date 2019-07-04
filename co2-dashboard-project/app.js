@@ -314,13 +314,24 @@ d3.queue()
 	    d3.select('.y-axis')
 	        .call(d3.axisLeft(yScale));
 
-			bar
+			var update = bar
 			    .attr('width', chartWidth)
 			    .attr('height', chartHeight)
 			  .selectAll('rect')
-			  .data(data)
+			  .data(data);
+
+
+			update
+				.exit()
+				.remove();
+
+
+			update
 			  .enter()
-			  .append('rect')
+		  	.append('rect')
+        .merge(update)
+        	// .transition()
+         //  .duration(500)
 			    .attr('width', barWidth)
 			    .attr('height', d => chartHeight - yScale(d.emissions) - 20)
 			    .attr('y', d => yScale(d.emissions))
@@ -328,10 +339,10 @@ d3.queue()
 			    .attr('fill', 'purple');
 
 			bar.append('text')
-        .text(`CO2 Emissions, ${country.properties.country}` )
         .attr('x', chartWidth / 2)
         .attr('y', 20)
-        .attr('text-anchor', 'middle');
+        .attr('text-anchor', 'middle')
+        .classed('title', true);
 
       bar.append('text')
 	        .text('CO2 Emissions, metric tons')
@@ -339,6 +350,9 @@ d3.queue()
 	        .attr('x', - chartWidth / 2)
 	        .attr('y', '0.2em')
 	        .attr('text-anchor', 'middle');
+
+	    d3.select('.title')
+          .text(`CO2 Emissions, ${country.properties.country}` );
 
 			
 
