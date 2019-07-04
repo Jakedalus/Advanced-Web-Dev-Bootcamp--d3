@@ -401,8 +401,16 @@ d3.queue()
 
 		function showTooltip(d) {
       var tooltip = d3.select('#tooltip');
-      console.log('showTooltip, d:', d);
-      console.log('tooltip:', tooltip);
+
+      // console.log('showTooltip, d:', d);
+      // console.log('tooltip:', tooltip);
+
+      var year = d3.select('#year-input').property('value');
+
+      var countryData = d.properties.data.filter(d => d.year === year)[0];
+
+      // console.log(`${year}: ${countryData}`, countryData);
+
 
       tooltip
           .style('opacity', 1)
@@ -412,6 +420,8 @@ d3.queue()
              <p>Country: ${d.properties.country}</p>
              <p>Continent: ${d.properties.continent}</p>
              <p>Region: ${d.properties.region}</p>
+             <p>Emissions: ${countryData.emissions}</p>
+             <p>Emissions Per Capita: ${countryData.emissionsPerCapita}</p>
           `)
     }
 
