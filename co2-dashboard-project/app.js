@@ -341,6 +341,8 @@ d3.queue()
 			update
 			  .enter()
 		  	.append('rect')
+		  		.on('mousemove touchmove', showTooltip)
+      		.on('mouseout touchend', hideTooltip)
 		  		.attr('width', barWidth)
 			    .attr('height', d => {
 			    	if (emissionsType === 'emissions-total') {
@@ -411,6 +413,8 @@ d3.queue()
 
       var countryData = {};
 
+      var html = ``;
+
       if (d.hasOwnProperty('geometry')) {
       	countryData = {
       		country: d.properties.country,
@@ -418,6 +422,13 @@ d3.queue()
       		region: d.properties.region,
       		...d.properties.data.filter(d => d.year === year)[0]
       	};
+      	html = `
+             <p>Country: ${countryData.country}</p>
+             <p>Continent: ${countryData.continent}</p>
+             <p>Region: ${countryData.region}</p>
+             <p>Emissions: ${countryData.emissions}</p>
+             <p>Emissions Per Capita: ${countryData.emissionsPerCapita}</p>
+         `;
       } else if (d.hasOwnProperty('startAngle')) {
       	countryData = {
       		country: d.data.Country,
@@ -426,8 +437,19 @@ d3.queue()
       		emissionsPerCapita: d.data['Emissions Per Capita'],
       		emissions: d.data.Emissions
       	};
-      } else if (d.hasOwnProperty('startAngle')) {
-
+      	html = `
+             <p>Country: ${countryData.country}</p>
+             <p>Continent: ${countryData.continent}</p>
+             <p>Region: ${countryData.region}</p>
+             <p>Emissions: ${countryData.emissions}</p>
+             <p>Emissions Per Capita: ${countryData.emissionsPerCapita}</p>
+         `;
+      } else if (d.hasOwnProperty('emissions')) {
+      	countryData = d;
+      	html = `
+             <p>Emissions: ${countryData.emissions}</p>
+             <p>Emissions Per Capita: ${countryData.emissionsPerCapita}</p>
+         `;
       }
 
       
@@ -439,13 +461,7 @@ d3.queue()
           .style('opacity', 1)
           .style('left', ( d3.event.pageX - tooltip.node().offsetWidth / 2 ) + 'px' )
           .style('top', ( d3.event.pageY - tooltip.node().offsetHeight - 10 ) + 'px')
-          .html(`
-             <p>Country: ${countryData.country}</p>
-             <p>Continent: ${countryData.continent}</p>
-             <p>Region: ${countryData.region}</p>
-             <p>Emissions: ${countryData.emissions}</p>
-             <p>Emissions Per Capita: ${countryData.emissionsPerCapita}</p>
-          `)
+          .html(html)
     }
 
     function hideTooltip(d) {
