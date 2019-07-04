@@ -67,20 +67,7 @@ d3.queue()
 
 
 
-		// EMISSIONS/EMISSIONS PER CAPITA RADIO BUTTONS
 
-		d3.select('radiogroup')
-			.on('change', function() {
-				console.log(d3.event.target.value);
-
-				var year = +d3.select('#year-input').property('value');
-
-				console.log(year);
-
-				setMapColor(year, d3.event.target.value);
-				drawPieChart(year, d3.event.target.value);
-
-			});
 
 
 		// MAP
@@ -116,15 +103,35 @@ d3.queue()
 		setMapColor(2011, 'emissions-total');
 		drawPieChart(2011, 'emissions-total');
 
+		let currentCountry = {};
+
 		d3.selectAll('.country')
 			.on('click', function(d) {
 				console.log('Data:', d);	
-				drawBarGraph(d);
+				currentCountry = d;
+				var emissionsType = d3.select(':checked').property('value');
+				drawBarGraph(d, emissionsType);
 			});
 
 
 		// BAR GRAPH
 		// drawBarGraph();
+
+
+		// EMISSIONS/EMISSIONS PER CAPITA RADIO BUTTONS
+
+		d3.select('radiogroup')
+			.on('change', function() {
+				console.log(d3.event.target.value);
+
+				var year = +d3.select('#year-input').property('value');
+
+				console.log(year);
+
+				setMapColor(year, d3.event.target.value);
+				drawPieChart(year, d3.event.target.value);
+				if(Object.entries(currentCountry).length !== 0 && currentCountry.constructor === Object) drawBarGraph(currentCountry, d3.event.target.value);
+			});
 
 
     // HELPER FUNCTIONS
@@ -254,12 +261,13 @@ d3.queue()
 		}
 
 
-		function drawBarGraph(country) {
+		function drawBarGraph(country, emissionsType) {
 
 
 			var data = country.properties.data.sort((a,b) => a.year - b.year);
 
 			console.log('data:', data);
+			console.log('emissionsType:', emissionsType);
 
 
 			var chartWidth = +d3.select('#bar').style("width").slice(0, d3.select('#bar').style("width").length-2);
@@ -272,14 +280,14 @@ d3.queue()
 			var minYear = +d3.min(data, d => d.year);
 			var maxYear = +d3.max(data, d => d.year);
 			var maxEmissions = +d3.max(co2Data, d => +d['Emissions']);
-			var maxEmissionsPerCaptia = +d3.max(co2Data, d => d['Emissions Per Capita']);
+			var maxEmissionsPerCaptia = +d3.max(co2Data, d => +d['Emissions Per Capita']);
 
 			var numBars = data.length;
 			var barPadding = 2;
 			var barWidth = ((chartWidth - padding) / numBars) - barPadding;
 
 			var yScale = d3.scaleLinear()
-			        .domain([0, maxEmissions])
+			        .domain([0, emissionsType === 'emissions-total' ? maxEmissions : maxEmissionsPerCaptia])
 			        .range([chartHeight - padding, padding]);
 
 			var xScale = d3.scaleLinear()
@@ -333,8 +341,21 @@ d3.queue()
         	// .transition()
          //  .duration(500)
 			    .attr('width', barWidth)
-			    .attr('height', d => chartHeight - yScale(d.emissions) - 20)
-			    .attr('y', d => yScale(d.emissions))
+			    .attr('height', d => {
+			    	if (emissionsType === 'emissions-total') {
+			    		return chartHeight - yScale(d.emissions) - 20;
+			    	} else if (emissionsType === 'emissions-per-capita') {
+			    		return chartHeight - yScale(d.emissionsPerCapita) - 20
+			    	}
+			    })
+			    .attr('y', d => {
+			    	if (emissionsType === 'emissions-total') {
+			    		return yScale(d.emissions);
+			    	} else if (emissionsType === 'emissions-per-capita') {
+			    		return yScale(d.emissionsPerCapita)
+			    	}
+			    	
+			    })
 			    .attr('x', (d,i) => xScale(d.year))
 			    .attr('fill', 'purple');
 
