@@ -202,6 +202,10 @@ d3.queue()
 		function drawPieChart(year, emissionsType) {
 			var filteredCO2Data = co2Data.filter(d => +d.Year === year);
 
+			var continentScale = d3.scaleOrdinal()
+							.domain(['Europe', 'Asia', 'Americas', 'Africa', 'Oceania'])
+							.range(['blue', 'green', 'orange', 'red', 'purple']);
+
 
 			var arcs = d3.pie()
 				.value(d => emissionsType === 'emissions-total' ? d.Emissions : d['Emissions Per Capita'])
@@ -257,9 +261,9 @@ d3.queue()
 					.on('mousemove touchmove', showTooltip)
       		.on('mouseout touchend', hideTooltip)
 				.merge(pie)		
-					// .attr('fill', d => colorScale(d.data.continent))
-					.attr('fill', d => 'yellow')
-					.attr('stroke', 'black')
+					.attr('fill', d => continentScale(d.data.Continent))
+					.attr('stroke', 'white')
+					.attr('stroke-width', '.2px')
 					.attr('d', path);
 
 		}
@@ -406,7 +410,7 @@ d3.queue()
 		function showTooltip(d) {
       var tooltip = d3.select('#tooltip');
 
-      console.log('showTooltip, d:', d);
+      // console.log('showTooltip, d:', d);
       // console.log('tooltip:', tooltip);
 
       var year = d3.select('#year-input').property('value');
@@ -454,7 +458,7 @@ d3.queue()
 
       
 
-      console.log(`${year}: ${countryData}`, countryData);
+      // console.log(`${year}: ${countryData}`, countryData);
 
 
       tooltip
