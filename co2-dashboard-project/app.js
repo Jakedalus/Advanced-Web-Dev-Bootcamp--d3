@@ -106,6 +106,8 @@ d3.queue()
 		let currentCountry = {};
 
 		d3.selectAll('.country')
+			.on('mousemove touchmove', showTooltip)
+       .on('mouseout touchend', hideTooltip)
 			.on('click', function(d) {
 				console.log('Data:', d);	
 				currentCountry = d;
@@ -395,18 +397,28 @@ d3.queue()
 	    d3.select('.title')
           .text(emissionsType === 'emissions-total' ? `CO2 Emissions, ${country.properties.country}` : `CO2 Emissions Per Capita, ${country.properties.country}`);
 
-			
-
-	    // bar.append('text')
-	    //     .attr('x', width / 2)
-	    //     .attr('y', '2em')
-	    //     .attr('text-anchor', 'middle')
-	    //     .style('font-size', '1.5em')
-	    //     .classed('title', true);
-
-	    console.log('bar:', bar);
-
 		}
+
+		function showTooltip(d) {
+      var tooltip = d3.select('#tooltip');
+      console.log('showTooltip, d:', d);
+      console.log('tooltip:', tooltip);
+
+      tooltip
+          .style('opacity', 1)
+          .style('left', ( d3.event.pageX - tooltip.node().offsetWidth / 2 ) + 'px' )
+          .style('top', ( d3.event.pageY - tooltip.node().offsetHeight - 10 ) + 'px')
+          .html(`
+             <p>Country: ${d.properties.country}</p>
+             <p>Continent: ${d.properties.continent}</p>
+             <p>Region: ${d.properties.region}</p>
+          `)
+    }
+
+    function hideTooltip(d) {
+      d3.select('#tooltip')
+          .style('opacity', 0);
+    }
 
 
 	});
