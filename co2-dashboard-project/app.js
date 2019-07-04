@@ -337,10 +337,7 @@ d3.queue()
 			update
 			  .enter()
 		  	.append('rect')
-        .merge(update)
-        	// .transition()
-         //  .duration(500)
-			    .attr('width', barWidth)
+		  		.attr('width', barWidth)
 			    .attr('height', d => {
 			    	if (emissionsType === 'emissions-total') {
 			    		return chartHeight - yScale(d.emissions) - 20;
@@ -357,7 +354,30 @@ d3.queue()
 			    	
 			    })
 			    .attr('x', (d,i) => xScale(d.year))
-			    .attr('fill', 'purple');
+			    .attr('fill', 'purple')
+        .merge(update)
+        	.transition()
+          .duration(500)
+          .delay((d, i) => i * 5)
+	          .attr('width', barWidth)
+				    .attr('height', d => {
+				    	if (emissionsType === 'emissions-total') {
+				    		return chartHeight - yScale(d.emissions) - 20;
+				    	} else if (emissionsType === 'emissions-per-capita') {
+				    		return chartHeight - yScale(d.emissionsPerCapita) - 20
+				    	}
+				    })
+				    .attr('y', d => {
+				    	if (emissionsType === 'emissions-total') {
+				    		return yScale(d.emissions);
+				    	} else if (emissionsType === 'emissions-per-capita') {
+				    		return yScale(d.emissionsPerCapita)
+				    	}
+				    	
+				    })
+				    .attr('x', (d,i) => xScale(d.year))
+				    .attr('fill', 'purple');
+			    
 
 			bar.append('text')
         .attr('x', chartWidth / 2)
