@@ -107,7 +107,7 @@ d3.queue()
 
 		d3.selectAll('.country')
 			.on('mousemove touchmove', showTooltip)
-       .on('mouseout touchend', hideTooltip)
+      .on('mouseout touchend', hideTooltip)
 			.on('click', function(d) {
 				console.log('Data:', d);	
 				currentCountry = d;
@@ -254,6 +254,8 @@ d3.queue()
 				.enter()
 				.append('path')
 					.classed('arc', true)
+					.on('mousemove touchmove', showTooltip)
+      		.on('mouseout touchend', hideTooltip)
 				.merge(pie)		
 					// .attr('fill', d => colorScale(d.data.continent))
 					.attr('fill', d => 'yellow')
@@ -402,14 +404,35 @@ d3.queue()
 		function showTooltip(d) {
       var tooltip = d3.select('#tooltip');
 
-      // console.log('showTooltip, d:', d);
+      console.log('showTooltip, d:', d);
       // console.log('tooltip:', tooltip);
 
       var year = d3.select('#year-input').property('value');
 
-      var countryData = d.properties.data.filter(d => d.year === year)[0];
+      var countryData = {};
 
-      // console.log(`${year}: ${countryData}`, countryData);
+      if (d.hasOwnProperty('geometry')) {
+      	countryData = {
+      		country: d.properties.country,
+      		continent: d.properties.continent,
+      		region: d.properties.region,
+      		...d.properties.data.filter(d => d.year === year)[0]
+      	};
+      } else if (d.hasOwnProperty('startAngle')) {
+      	countryData = {
+      		country: d.data.Country,
+      		continent: d.data.Continent,
+      		region: d.data.Region,
+      		emissionsPerCapita: d.data['Emissions Per Capita'],
+      		emissions: d.data.Emissions
+      	};
+      } else if (d.hasOwnProperty('startAngle')) {
+
+      }
+
+      
+
+      console.log(`${year}: ${countryData}`, countryData);
 
 
       tooltip
@@ -417,9 +440,9 @@ d3.queue()
           .style('left', ( d3.event.pageX - tooltip.node().offsetWidth / 2 ) + 'px' )
           .style('top', ( d3.event.pageY - tooltip.node().offsetHeight - 10 ) + 'px')
           .html(`
-             <p>Country: ${d.properties.country}</p>
-             <p>Continent: ${d.properties.continent}</p>
-             <p>Region: ${d.properties.region}</p>
+             <p>Country: ${countryData.country}</p>
+             <p>Continent: ${countryData.continent}</p>
+             <p>Region: ${countryData.region}</p>
              <p>Emissions: ${countryData.emissions}</p>
              <p>Emissions Per Capita: ${countryData.emissionsPerCapita}</p>
           `)
