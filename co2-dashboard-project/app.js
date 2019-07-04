@@ -393,7 +393,7 @@ d3.queue()
 	        .attr('text-anchor', 'middle');
 
 	    d3.select('.title')
-          .text(`CO2 Emissions, ${country.properties.country}` );
+          .text(emissionsType === 'emissions-total' ? `CO2 Emissions, ${country.properties.country}` : `CO2 Emissions Per Capita, ${country.properties.country}`);
 
 			
 
