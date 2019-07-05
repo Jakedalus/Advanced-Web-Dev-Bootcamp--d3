@@ -240,7 +240,7 @@ d3.queue()
 					// console.log('b:', b);
 					if (a.continent < b.continent) return -1;
 					else if(a.continent > b.continent) return 1;
-					else return emissionsType === 'emissions-total' ? a.emissions - b.emissions : a.emissionsPerCapita - b.emissionsPerCapita;
+					// else return emissionsType === 'emissions-total' ? a.emissions - b.emissions : a.emissionsPerCapita - b.emissionsPerCapita;
 				})
 				(filteredCO2Data);
 
@@ -307,7 +307,12 @@ d3.queue()
 			var chartWidth = +d3.select('#bar').style("width").slice(0, d3.select('#bar').style("width").length-2);
 			// var chartWidth = 500;
 			var chartHeight = +d3.select('#bar').style("height").slice(0, d3.select('#bar').style("height").length-2);
-			var padding = 20;
+			var padding = {
+				top: 30,
+				right: 30,
+				bottom: 30,
+				left: 110
+			};
 
 			console.log('co2Data:', co2Data);
 
@@ -318,15 +323,15 @@ d3.queue()
 
 			var numBars = data.length;
 			var barPadding = 2;
-			var barWidth = ((chartWidth - padding) / numBars) - barPadding;
+			var barWidth = ((chartWidth - padding.left) / numBars) - barPadding;
 
 			var yScale = d3.scaleLinear()
 			        .domain([0, emissionsType === 'emissions-total' ? maxEmissions : maxEmissionsPerCaptia])
-			        .range([chartHeight - padding, padding]);
+			        .range([chartHeight - padding.bottom, padding.top]);
 
 			var xScale = d3.scaleLinear()
                      .domain(d3.extent(data, d => d.year))
-                     .range([padding, chartWidth - padding]);
+                     .range([padding.left, chartWidth - padding.right]);
 
 
 
@@ -343,11 +348,11 @@ d3.queue()
 
 
 	    bar.append('g')
-        .attr('transform', 'translate(0, ' + (chartHeight - padding) + ')')
+        .attr('transform', 'translate(0, ' + (chartHeight - padding.bottom) + ')')
         .classed('x-axis', true);
 
 	    bar.append('g')
-	        .attr('transform', 'translate(' + (padding - 0) + ',0)')
+	        .attr('transform', 'translate(' + (padding.left - 0) + ',0)')
 	        .classed('y-axis', true);
 
 	    d3.select('.x-axis')
@@ -383,9 +388,9 @@ d3.queue()
 			    })
 			    .attr('y', d => {
 			    	if (emissionsType === 'emissions-total') {
-			    		return yScale(d.emissions);
+			    		return yScale(d.emissions) - 10;
 			    	} else if (emissionsType === 'emissions-per-capita') {
-			    		return yScale(d.emissionsPerCapita)
+			    		return yScale(d.emissionsPerCapita) - 10
 			    	}
 			    	
 			    })
@@ -405,9 +410,9 @@ d3.queue()
 				    })
 				    .attr('y', d => {
 				    	if (emissionsType === 'emissions-total') {
-				    		return yScale(d.emissions);
+				    		return yScale(d.emissions) - 10;
 				    	} else if (emissionsType === 'emissions-per-capita') {
-				    		return yScale(d.emissionsPerCapita)
+				    		return yScale(d.emissionsPerCapita) - 10
 				    	}
 				    	
 				    })
@@ -417,16 +422,18 @@ d3.queue()
 
 			bar.append('text')
         .attr('x', chartWidth / 2)
-        .attr('y', 20)
+        .attr('y', "1em")
+        .attr("font-size", "1.5em")
         .attr('text-anchor', 'middle')
         .classed('title', true);
 
       bar.append('text')
 	        .text('CO2 Emissions, metric tons')
 	        .attr('transform', 'rotate(-90)')
-	        .attr('x', - chartWidth / 2)
-	        .attr('y', '0.2em')
-	        .attr('text-anchor', 'middle');
+	        .attr('x', - chartHeight / 2)
+	        .attr('dy', '1em')
+	        .attr('text-anchor', 'middle')
+	        .classed("y-axis-label", true);
 
 	    d3.select('.title')
           .text(emissionsType === 'emissions-total' ? `CO2 Emissions, ${country.properties.country}` : `CO2 Emissions Per Capita, ${country.properties.country}`);
@@ -437,6 +444,7 @@ d3.queue()
       var tooltip = d3.select('#tooltip');
 
       // console.log('showTooltip, d:', d);
+      // console.log('d.hasOwnProperty("geometry"):', d.hasOwnProperty('geometry'));
       // console.log('tooltip:', tooltip);
 
       var year = d3.select('#year-input').property('value');
@@ -446,12 +454,15 @@ d3.queue()
       var html = ``;
 
       if (d.hasOwnProperty('geometry')) {
+      	// console.log('Hovering over map!!');
       	countryData = {
       		country: d.properties.country,
       		continent: d.properties.continent,
       		region: d.properties.region,
-      		...d.properties.data.filter(d => d.year === year)[0]
+      		...d.properties.data.filter(d => +d.year === +year)[0]
       	};
+      	// console.log(d.properties.data, year);
+      	// console.log(d.properties.data.filter(d => d.year === year));
       	html = `
              <p>Country: ${countryData.country}</p>
              <p>Continent: ${countryData.continent}</p>
