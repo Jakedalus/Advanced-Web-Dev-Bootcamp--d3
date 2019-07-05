@@ -365,7 +365,7 @@ d3.queue()
 	        .classed('y-axis', true);
 
 	    d3.select('.x-axis')
-	          .call(d3.axisBottom(xScale));
+	          .call(d3.axisBottom(xScale).tickFormat(d3.format('.0f')));
 
 	    d3.select('.y-axis')
 	        .call(d3.axisLeft(yScale));
