@@ -53,26 +53,7 @@ d3.queue()
 
 		
 
-		// YEAR INPUT SLIDER
-
-		d3.select('#year-input')
-			.property('min', d3.min(co2Data, d => d.year))
-			.property('max', d3.max(co2Data, d => d.year))
-			.property('value', d3.max(co2Data, d => d.year))
-			.on('change', function() {
-				console.log('Setting year to: ', +d3.event.target.value);
-
-				d3.select('#current-year')
-					.text(+d3.event.target.value);
-
-				var emissionsType = d3.select(':checked').property('value');
-
-				console.log(emissionsType);
-
-
-				setMapColor(+d3.event.target.value, emissionsType);
-				drawPieChart(+d3.event.target.value, emissionsType);
-			});
+	
 
 
 
@@ -127,10 +108,36 @@ d3.queue()
 			.on('mousemove touchmove', showTooltip)
       .on('mouseout touchend', hideTooltip)
 			.on('click', function(d) {
-				console.log('Data:', d);	
+				console.log('Data:', d);
+				console.log(d3.event.target);	
 				currentCountry = d;
 				var emissionsType = d3.select(':checked').property('value');
 				drawBarGraph(d, emissionsType);
+			});
+
+
+		// YEAR INPUT SLIDER
+
+		d3.select('#year-input')
+			.property('min', d3.min(co2Data, d => d.year))
+			.property('max', d3.max(co2Data, d => d.year))
+			.property('value', d3.max(co2Data, d => d.year))
+			.on('change', function() {
+				console.log('Setting year to: ', +d3.event.target.value);
+
+				d3.select('#current-year')
+					.text(+d3.event.target.value);
+
+				var emissionsType = d3.select(':checked').property('value');
+
+				
+
+				console.log(emissionsType);
+
+
+				setMapColor(+d3.event.target.value, emissionsType);
+				drawPieChart(+d3.event.target.value, emissionsType);
+				drawBarGraph(currentCountry, emissionsType)
 			});
 
 
@@ -297,6 +304,8 @@ d3.queue()
 
 		function drawBarGraph(country, emissionsType) {
 
+			var year = +d3.select('#year-input').property('value');
+
 
 			var data = country.properties.data.sort((a,b) => a.year - b.year);
 
@@ -396,6 +405,13 @@ d3.queue()
 			    })
 			    .attr('x', (d,i) => xScale(d.year))
 			    .attr('fill', 'purple')
+			    .attr('fill', d => {
+				    	if (d.year === year) {
+				    		return 'blue';
+				    	} else {
+				    		return 'purple';
+				    	}
+				   })
         .merge(update)
         	.transition()
           .duration(500)
@@ -417,7 +433,13 @@ d3.queue()
 				    	
 				    })
 				    .attr('x', (d,i) => xScale(d.year))
-				    .attr('fill', 'purple');
+				    .attr('fill', d => {
+				    	if (d.year === year) {
+				    		return 'blue';
+				    	} else {
+				    		return 'purple';
+				    	}
+				    });
 			    
 
 			bar.append('text')
@@ -447,7 +469,7 @@ d3.queue()
       // console.log('d.hasOwnProperty("geometry"):', d.hasOwnProperty('geometry'));
       // console.log('tooltip:', tooltip);
 
-      var year = d3.select('#year-input').property('value');
+      var year = +d3.select('#year-input').property('value');
 
       var countryData = {};
 
