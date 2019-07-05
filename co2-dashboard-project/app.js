@@ -485,6 +485,7 @@ d3.queue()
       	};
       	// console.log(d.properties.data, year);
       	// console.log(d.properties.data.filter(d => d.year === year));
+      	
       	html = `
              <p>Country: ${countryData.country}</p>
              <p>Continent: ${countryData.continent}</p>
@@ -500,6 +501,9 @@ d3.queue()
       		emissionsPerCapita: d.data.emissionsPerCapita,
       		emissions: d.data.emissions
       	};
+
+      	var percentage = 100 * (d.endAngle - d.startAngle) / (Math.PI * 2);
+
       	html = `
              <p>Country: ${countryData.country}</p>
              <p>Continent: ${countryData.continent}</p>
@@ -507,6 +511,18 @@ d3.queue()
              <p>Emissions: ${countryData.emissions}</p>
              <p>Emissions Per Capita: ${countryData.emissionsPerCapita}</p>
          `;
+
+        var emissionsType = d3.select('input[type="radio"]:checked').property('value');
+
+        console.log(emissionsType);
+
+        if (emissionsType === 'emissions-total') {
+        	html += `<p>Percentage of Emissions: ${percentage.toFixed(2)}%</p>`;
+        } else if (emissionsType === 'emissions-per-capita') {
+        	html += `<p>Percentage of Emissions Per Capita: ${percentage.toFixed(2)}%</p>`;
+        }
+ 
+
       } else if (d.hasOwnProperty('emissions')) {
       	countryData = d;
       	html = `
