@@ -240,7 +240,7 @@ d3.queue()
 					// console.log('b:', b);
 					if (a.continent < b.continent) return -1;
 					else if(a.continent > b.continent) return 1;
-					else return a.emissions - b.emissions;
+					else return emissionsType === 'emissions-total' ? a.emissions - b.emissions : a.emissionsPerCapita - b.emissionsPerCapita;
 				})
 				(filteredCO2Data);
 
