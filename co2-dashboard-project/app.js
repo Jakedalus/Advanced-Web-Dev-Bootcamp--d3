@@ -107,6 +107,14 @@ d3.queue()
 				.classed('country', true)
 				.attr('d', path);
 
+		map
+			.append("text")
+	      .attr("x", mapWidth / 2)
+	      .attr("y", "1em")
+	      .attr("font-size", "1.5em")
+	      .style("text-anchor", "middle")
+	      .classed("map-title", true);
+
 		d3.select('#current-year')
 					.text(2011);
 
@@ -167,11 +175,11 @@ d3.queue()
 
 			var emissionsScale = d3.scaleLinear()
 							.domain([0, d3.max(filteredCO2Data, d => d.emissions)])
-							.range(['white', '#bb0a1e']);
+							.range(['white', '#c0392b']);
 
 			var emissionsPerCapitaScale = d3.scaleLinear()
 							.domain([0, d3.max(filteredCO2Data, d => d.emissionsPerCapita) ])
-							.range(['white','darkred']);
+							.range(['white','#c0392b']);
 
 			console.log(d3.selectAll('.country'));
 
@@ -207,6 +215,14 @@ d3.queue()
 						// return data ? emissionsPerCapitaScale(data) : '#ccc';
 						// return data ? emissionsScale(data) : '#ccc';	
 					});
+
+			d3.select('.map-title')
+					.text("Carbon dioxide " + graphTitle(emissionsType) + ", " + year);
+
+			function graphTitle(str) {
+			  return str.replace(/[A-Z]/g, c => " " + c.toLowerCase());
+			}
+
 		}
 
 		function drawPieChart(year, emissionsType) {
