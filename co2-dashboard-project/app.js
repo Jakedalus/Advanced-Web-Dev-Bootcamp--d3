@@ -1,6 +1,16 @@
 d3.queue()
 	.defer(d3.json, '//unpkg.com/world-atlas@1.1.4/world/50m.json')
-	.defer(d3.csv, './data/all_data.csv')
+	.defer(d3.csv, './data/all_data.csv', function(row) {
+		return {
+			continent: row.Continent,
+			country: row.Country,
+			countryCode: row['Country Code'],
+			emissions: +row.Emissions,
+			emissionsPerCapita: +row['Emissions Per Capita'],
+			region: row.Region,
+			year: +row.Year
+		}
+	})
 	.await((error, mapData, co2Data) => {
 		if (error) throw error;
 
@@ -15,25 +25,25 @@ d3.queue()
 		var geoData = topojson.feature(mapData, mapData.objects.countries).features;
 
 		co2Data.forEach(row => {
-			var countries = geoData.filter(d => d.id === row['Country Code']);
+			var countries = geoData.filter(d => d.id === row.countryCode);
 			countries.forEach(country => {
 				// console.log('row:', row);
 				if (country.properties.data) {
 					country.properties.data.push({
-						year: row.Year,
-						emissions: row.Emissions,
-						emissionsPerCapita: row['Emissions Per Capita']
+						year: row.year,
+						emissions: row.emissions,
+						emissionsPerCapita: row.emissionsPerCapita
 					}); 
 				} else {
 					country.properties.data = [{
-						year: row.Year,
-						emissions: row.Emissions,
-						emissionsPerCapita: row['Emissions Per Capita']
+						year: row.year,
+						emissions: row.emissions,
+						emissionsPerCapita: row.emissionsPerCapita
 					}];
-					country.properties.country = row.Country;
-					country.properties.continent = row.Continent;
-					country.properties.countryCode = row['Country Code'];
-					country.properties.region = row.Region;
+					country.properties.country = row.country;
+					country.properties.continent = row.continent;
+					country.properties.countryCode = row.countryCode;
+					country.properties.region = row.region;
 				}
 					
 			});
@@ -46,9 +56,9 @@ d3.queue()
 		// YEAR INPUT SLIDER
 
 		d3.select('#year-input')
-			.property('min', d3.min(co2Data, d => +d.Year))
-			.property('max', d3.max(co2Data, d => +d.Year))
-			.property('value', d3.max(co2Data, d => +d.Year))
+			.property('min', d3.min(co2Data, d => d.year))
+			.property('max', d3.max(co2Data, d => d.year))
+			.property('value', d3.max(co2Data, d => d.year))
 			.on('change', function() {
 				console.log('Setting year to: ', +d3.event.target.value);
 
@@ -143,24 +153,24 @@ d3.queue()
 			console.log('Year:', year);
 			console.log('emissionsType:', emissionsType);
 
-			var filteredCO2Data = co2Data.filter(d => +d.Year === year);
+			var filteredCO2Data = co2Data.filter(d => d.year === year);
 
 			console.log('filteredCO2Data:', filteredCO2Data);
 
 			// console.log('Data filtered by year:', filteredData);
-			console.log('Max Emissions:', d3.max(filteredCO2Data, d => +d.Emissions));
-			console.log('Max Emissions Per Capita:', d3.max(filteredCO2Data, d => +d['Emissions Per Capita']));
-			console.log('Max Emissions Per Capita:', filteredCO2Data.filter(d => +d['Emissions Per Capita'] === d3.max(filteredCO2Data, d => +d['Emissions Per Capita'])));
+			console.log('Max Emissions:', d3.max(filteredCO2Data, d => d.emissions));
+			console.log('Max Emissions Per Capita:', d3.max(filteredCO2Data, d => d.emissionsPerCapita));
+			console.log('Max Emissions Per Capita:', filteredCO2Data.filter(d => d.emissionsPerCapita === d3.max(filteredCO2Data, d => d.emissionsPerCapita)));
 
-			console.log('Min Emissions Per Capita:', d3.min(filteredCO2Data, d => +d['Emissions Per Capita']));
+			console.log('Min Emissions Per Capita:', d3.min(filteredCO2Data, d => d.emissionsPerCapita));
 
 
 			var emissionsScale = d3.scaleLinear()
-							.domain([0, d3.max(filteredCO2Data, d => +d.Emissions)])
+							.domain([0, d3.max(filteredCO2Data, d => d.emissions)])
 							.range(['white', '#bb0a1e']);
 
 			var emissionsPerCapitaScale = d3.scaleLinear()
-							.domain([0, d3.max(filteredCO2Data, d => +d['Emissions Per Capita']) ])
+							.domain([0, d3.max(filteredCO2Data, d => d.emissionsPerCapita) ])
 							.range(['white','darkred']);
 
 			console.log(d3.selectAll('.country'));
@@ -200,7 +210,7 @@ d3.queue()
 		}
 
 		function drawPieChart(year, emissionsType) {
-			var filteredCO2Data = co2Data.filter(d => +d.Year === year);
+			var filteredCO2Data = co2Data.filter(d => d.year === year);
 
 			var continentScale = d3.scaleOrdinal()
 							.domain(['Europe', 'Asia', 'Americas', 'Africa', 'Oceania'])
@@ -208,13 +218,13 @@ d3.queue()
 
 
 			var arcs = d3.pie()
-				.value(d => emissionsType === 'emissions-total' ? d.Emissions : d['Emissions Per Capita'])
+				.value(d => emissionsType === 'emissions-total' ? d.emissions : d.emissionsPerCapita)
 				.sort(function(a, b) {
 					// console.log('a:', a);
 					// console.log('b:', b);
-					if (a.Continent < b.Continent) return -1;
-					else if(a.Continent > b.Continent) return 1;
-					else return a.Emissions - b.Emissions;
+					if (a.continent < b.continent) return -1;
+					else if(a.continent > b.continent) return 1;
+					else return a.emissions - b.emissions;
 				})
 				(filteredCO2Data);
 
@@ -261,7 +271,7 @@ d3.queue()
 					.on('mousemove touchmove', showTooltip)
       		.on('mouseout touchend', hideTooltip)
 				.merge(pie)		
-					.attr('fill', d => continentScale(d.data.Continent))
+					.attr('fill', d => continentScale(d.data.continent))
 					.attr('stroke', 'white')
 					.attr('stroke-width', '.2px')
 					.attr('d', path);
@@ -285,10 +295,10 @@ d3.queue()
 
 			console.log('co2Data:', co2Data);
 
-			var minYear = +d3.min(data, d => d.year);
-			var maxYear = +d3.max(data, d => d.year);
-			var maxEmissions = +d3.max(co2Data, d => +d['Emissions']);
-			var maxEmissionsPerCaptia = +d3.max(co2Data, d => +d['Emissions Per Capita']);
+			var minYear = d3.min(data, d => d.year);
+			var maxYear = d3.max(data, d => d.year);
+			var maxEmissions = d3.max(co2Data, d => d.emissions);
+			var maxEmissionsPerCaptia = d3.max(co2Data, d => d.emissionsPerCapita);
 
 			var numBars = data.length;
 			var barPadding = 2;
@@ -435,11 +445,11 @@ d3.queue()
          `;
       } else if (d.hasOwnProperty('startAngle')) {
       	countryData = {
-      		country: d.data.Country,
-      		continent: d.data.Continent,
-      		region: d.data.Region,
-      		emissionsPerCapita: d.data['Emissions Per Capita'],
-      		emissions: d.data.Emissions
+      		country: d.data.country,
+      		continent: d.data.continent,
+      		region: d.data.region,
+      		emissionsPerCapita: d.data.emissionsPerCapita,
+      		emissions: d.data.emissions
       	};
       	html = `
              <p>Country: ${countryData.country}</p>
